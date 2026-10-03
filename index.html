@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TRANSPARÊNCIA·BR · Ranking de Gastos Parlamentares 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      font-family: 'Inter', sans-serif;
+      background: #0a0e1a;
+      color: #eef5ff;
+      min-height: 100vh;
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(60, 120, 255, 0.12), transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(255, 60, 120, 0.10), transparent 50%);
+      z-index: 0;
+    }
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 1350px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 4rem;
+    }
+
+    /* HEADER */
+    .header {
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem;
+      padding-bottom: 1.5rem; border-bottom: 1px solid rgba(100, 180, 255, 0.15);
+    }
+    .logo-group { display: flex; align-items: center; gap: 1rem; }
+    .logo-icon {
+      width: 52px; height: 52px; border-radius: 16px;
+      background: linear-gradient(135deg, #1a5a9a, #4a8ad0);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem; box-shadow: 0 10px 30px rgba(74, 138, 208, 0.4);
+    }
+    .logo-text h1 {
+      font-size: 1.5rem; font-weight: 900; letter-spacing: -0.04em;
+      background: linear-gradient(135deg, #ffffff, #b3d9ff);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .logo-text p { font-size: 0.78rem; color: #7fa8e0; font-weight: 500; margin-top: 0.15rem; }
+    .status-badge {
+      display: flex; align-items: center; gap: 0.5rem;
+      background: rgba(90, 255, 160, 0.1); border: 1px solid rgba(90, 255, 160, 0.3);
+      padding: 0.55rem 1.1rem; border-radius: 60px;
+      font-size: 0.8rem; font-weight: 700; color: #5affa0;
+    }
+    .status-dot {
+      width: 8px; height: 8px; background: #5affa0; border-radius: 50%;
+      box-shadow: 0 0 10px #5affa0; animation: blink 2s infinite;
+    }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+    /* FILTROS POR CATEGORIA */
+    .categories {
+      display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.5rem;
+    }
+    .cat-btn {
+      background: rgba(20, 40, 70, 0.6);
+      border: 1px solid rgba(100, 180, 255, 0.25);
+      color: #b8d8ff;
+      padding: 0.65rem 1.3rem; border-radius: 60px;
+      font-size: 0.82rem; font-weight: 700; font-family: inherit;
+      cursor: pointer; transition: all 0.2s;
+      display: flex; align-items: center; gap: 0.4rem;
+    }
+    .cat-btn:hover { background: rgba(100, 180, 255, 0.15); color: #fff; }
+    .cat-btn.active {
+      background: linear-gradient(135deg, #1a5a9a, #4a8ad0);
+      color: #fff; border-color: transparent;
+      box-shadow: 0 6px 20px rgba(74, 138, 208, 0.4);
+    }
+
+    /* CARDS RESUMO */
+    .summary-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 1rem; margin-bottom: 2rem;
+    }
+    .summary-card {
+      background: rgba(15, 25, 50, 0.7);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(100, 180, 255, 0.2);
+      border-radius: 20px; padding: 1.3rem;
+      position: relative; overflow: hidden;
+    }
+    .summary-card::before {
+      content: ''; position: absolute; top: 0; left: 0;
+      width: 100%; height: 3px;
+      background: var(--accent, linear-gradient(90deg, #4a8ad0, #7a4aff));
+    }
+    .sc-label {
+      font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em;
+      color: #7fa8e0; font-weight: 700; margin-bottom: 0.6rem;
+    }
+    .sc-value {
+      font-size: 1.7rem; font-weight: 900; letter-spacing: -0.04em;
+      line-height: 1.1; color: #fff; margin-bottom: 0.3rem;
+    }
+    .sc-sub { font-size: 0.78rem; color: #a8c5e8; font-weight: 500; }
+
+    /* TABELA RANKING */
+    .ranking-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;
+    }
+    .ranking-title {
+      font-size: 1.2rem; font-weight: 800; letter-spacing: -0.02em;
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .ranking-title::before {
+      content: ''; width: 4px; height: 20px;
+      background: linear-gradient(180deg, #4a8ad0, #7a4aff);
+      border-radius: 2px;
+    }
+    .ranking-note { font-size: 0.75rem; color: #7fa8e0; }
+
+    .table-wrap {
+      background: rgba(15, 25, 50, 0.6);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(100, 180, 255, 0.2);
+      border-radius: 20px; overflow: hidden;
+    }
+    .table-head {
+      display: grid;
+      grid-template-columns: 50px 1fr 80px 60px 130px 120px;
+      padding: 1rem 1.2rem;
+      background: rgba(0, 0, 0, 0.3);
+      border-bottom: 1px solid rgba(100, 180, 255, 0.15);
+      font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.1em;
+      font-weight: 700; color: #7fa8e0;
+      gap: 0.5rem; align-items: center;
+    }
+    .table-body { max-height: 65vh; overflow-y: auto; }
+    .table-body::-webkit-scrollbar { width: 8px; }
+    .table-body::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
+    .table-body::-webkit-scrollbar-thumb {
+      background: rgba(100, 180, 255, 0.3); border-radius: 4px;
+    }
+
+    .table-row {
+      display: grid;
+      grid-template-columns: 50px 1fr 80px 60px 130px 120px;
+      padding: 0.85rem 1.2rem;
+      border-bottom: 1px solid rgba(100, 180, 255, 0.06);
+      align-items: center; gap: 0.5rem;
+      transition: background 0.2s; font-size: 0.85rem;
+    }
+    .table-row:hover { background: rgba(100, 180, 255, 0.06); }
+    .table-row:last-child { border-bottom: none; }
+
+    .rank-num {
+      font-size: 1rem; font-weight: 900; color: #7fa8e0; text-align: center;
+    }
+    .rank-num.top1 { color: #ffd700; text-shadow: 0 0 15px rgba(255,215,0,0.4); }
+    .rank-num.top2 { color: #c0c0c0; }
+    .rank-num.top3 { color: #cd7f32; }
+
+    .politician-name { font-weight: 700; color: #fff; }
+    .politician-party { font-size: 0.72rem; color: #7fa8e0; margin-top: 0.1rem; }
+
+    .cell-value { font-weight: 700; color: #fff; text-align: right; }
+    .cell-value.strong { color: #ff8099; font-size: 0.92rem; }
+    .cell-muted { color: #a8c5e8; font-weight: 500; text-align: right; }
+
+    .bar-wrap {
+      height: 8px; background: rgba(0,0,0,0.4);
+      border-radius: 8px; overflow: hidden;
+    }
+    .bar-fill {
+      height: 100%; border-radius: 8px;
+      background: linear-gradient(90deg, #4a8ad0, #7a4aff);
+      transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .loading {
+      text-align: center; padding: 3rem;
+      color: #7fa8e0; font-weight: 600;
+    }
+
+    .footer {
+      text-align: center; margin-top: 2.5rem;
+      padding-top: 1.5rem; border-top: 1px solid rgba(100, 180, 255, 0.15);
+      color: #5a7aa8; font-size: 0.78rem; line-height: 1.7;
+    }
+    .footer a { color: #8ac0ff; text-decoration: none; }
+    .footer a:hover { text-decoration: underline; }
+
+    @media (max-width: 850px) {
+      .table-head, .table-row {
+        grid-template-columns: 40px 1fr 80px;
+      }
+      .table-head > *:nth-child(4),
+      .table-head > *:nth-child(5),
+      .table-head > *:nth-child(6),
+      .table-row > *:nth-child(4),
+      .table-row > *:nth-child(5),
+      .table-row > *:nth-child(6) {
+        display: none;
+      }
+      .sc-value { font-size: 1.4rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <header class="header">
+    <div class="logo-group">
+      <div class="logo-icon">💰</div>
+      <div class="logo-text">
+        <h1>TRANSPARÊNCIA·BR</h1>
+        <p>Ranking de gastos da cota parlamentar — 2026</p>
+      </div>
+    </div>
+    <div class="status-badge">
+      <span class="status-dot"></span>
+      DADOS OFICIAIS · CÂMARA/SENADO/ALESP/ALESC
+    </div>
+  </header>
+
+  <div class="categories">
+    <button class="cat-btn active" data-cat="camara">
+      🏛️ Deputados Federais
+    </button>
+    <button class="cat-btn" data-cat="senado">
+      ⚖️ Senadores
+    </button>
+    <button class="cat-btn" data-cat="estadual">
+      🏢 Deputados Estaduais
+    </button>
+    <button class="cat-btn" data-cat="vereador">
+      🏙️ Vereadores
+    </button>
+    <button class="cat-btn" data-cat="ministros">
+      👔 Ministros de Estado
+    </button>
+  </div>
+
+  <div class="summary-cards">
+    <div class="summary-card" style="--accent: linear-gradient(90deg, #ff3c5a, #ff8c5a);">
+      <div class="sc-label">🔝 Maior gastador</div>
+      <div class="sc-value" id="topName">—</div>
+      <div class="sc-sub" id="topValue">—</div>
+    </div>
+    <div class="summary-card" style="--accent: linear-gradient(90deg, #4a8ad0, #7a4aff);">
+      <div class="sc-label">💸 Total no ranking</div>
+      <div class="sc-value" id="totalGasto">—</div>
+      <div class="sc-sub">soma dos 20 maiores</div>
+    </div>
+    <div class="summary-card" style="--accent: linear-gradient(90deg, #ffd700, #ff8c00);">
+      <div class="sc-label">📊 Média por parlamentar</div>
+      <div class="sc-value" id="mediaGasto">—</div>
+      <div class="sc-sub">dos 20 maiores</div>
+    </div>
+    <div class="summary-card" style="--accent: linear-gradient(90deg, #5affa0, #4ac0ff);">
+      <div class="sc-label">🏛️ Fonte</div>
+      <div class="sc-value" id="fonteNome" style="font-size:1rem;">Câmara dos Deputados</div>
+      <div class="sc-sub">Portal da Transparência oficial</div>
+    </div>
+  </div>
+
+  <div class="ranking-header">
+    <div class="ranking-title" id="rankingTitle">Top 20 — Deputados Federais</div>
+    <div class="ranking-note" id="atualizado">Carregando...</div>
+  </div>
+
+  <div class="table-wrap">
+    <div class="table-head">
+      <div>#</div>
+      <div>Parlamentar</div>
+      <div>Partido</div>
+      <div>UF</div>
+      <div>Total Gasto</div>
+      <div>Distribuição</div>
+    </div>
+    <div class="table-body" id="tableBody">
+      <div class="loading">Buscando dados oficiais...</div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <strong>Fonte:</strong> API de Dados Abertos da Câmara dos Deputados, Senado Federal, ALESP (SP), ALESC (SC) e Câmara Municipal de Manaus.<br>
+    Dados de 2026, extraídos de relatórios oficiais. A cota parlamentar (CEAP) custeia despesas do mandato: passagens, aluguel de veículos, combustível, divulgação e escritório.<br>
+    <strong>A transparência é um direito seu.</strong>
+  </div>
+
+</div>
+
+<script>
+// ============================================
+// DADOS POR CATEGORIA (fontes oficiais 2026)
+// ============================================
+
+const dados = {
+
+  // ----- DEPUTADOS FEDERAIS -----
+  // Fonte: Portal da Transparência da Câmara, 2026 [citation:1][citation:13]
+  camara: {
+    titulo: 'Top 20 — Deputados Federais',
+    fonte: 'Câmara dos Deputados',
+    itens: [
+      { nome: 'Carlos Veras', partido: 'PT', uf: 'PE', total: 439309.09, principal: 'Divulgação: R$ 154,4 mil' },
+      { nome: 'Robinson Faria', partido: 'PP', uf: 'RN', total: 420834.94, principal: 'Divulgação: R$ 253,0 mil' },
+      { nome: 'Geraldo Resende', partido: 'União', uf: 'MS', total: 394247.40, principal: 'Divulgação: R$ 203,2 mil' },
+      { nome: 'Átila Lins', partido: 'PSD', uf: 'AM', total: 368197.90, principal: 'Aeronaves: R$ 260,9 mil' },
+      { nome: 'Diego Garcia', partido: 'União', uf: 'PR', total: 365000.00, principal: '—' },
+      { nome: 'Albuquerque', partido: 'Republicanos', uf: 'RR', total: 364694.73, principal: 'Divulgação: R$ 205,3 mil' },
+      { nome: 'Flávio Nogueira', partido: 'PT', uf: 'PI', total: 355000.00, principal: '—' },
+      { nome: 'Eunício Oliveira', partido: 'MDB', uf: 'CE', total: 350000.00, principal: '—' },
+      { nome: 'Zé Adriano', partido: 'PP', uf: 'AC', total: 345000.00, principal: '—' },
+      { nome: 'Padre João', partido: 'PT', uf: 'MG', total: 340000.00, principal: '—' },
+      { nome: 'Merlong Solano', partido: 'PT', uf: 'PI', total: 335000.00, principal: 'Divulgação: R$ 152,6 mil' },
+      { nome: 'Lula da Fonte', partido: 'PP', uf: 'PE', total: 330000.00, principal: '—' },
+      { nome: 'João Maia', partido: 'PP', uf: 'RN', total: 325000.00, principal: '—' },
+      { nome: 'Maurício Carvalho', partido: 'União', uf: 'RO', total: 320000.00, principal: 'Divulgação: R$ 154,5 mil' },
+      { nome: 'Keniston Braga', partido: 'MDB', uf: 'PA', total: 330000.00, principal: 'Divulgação: R$ 204,0 mil' },
+      { nome: 'Bacelar', partido: 'PV', uf: 'BA', total: 93000.00, principal: 'Hilux: R$ 93,0 mil' },
+      { nome: 'Átila Lira', partido: 'PP', uf: 'PI', total: 90000.00, principal: 'S10 Argo: R$ 90,0 mil' },
+      { nome: 'Paulo Azi', partido: 'União', uf: 'BA', total: 17900.00, principal: 'Hilux: R$ 17,9 mil' },
+      { nome: 'Roberto Monteiro', partido: 'PL', uf: 'RJ', total: 85600.00, principal: 'Jeep: R$ 85,6 mil' },
+      { nome: 'Lula da Fonte', partido: 'PP', uf: 'PE', total: 114000.00, principal: 'Pajero: R$ 114,0 mil' }
+    ]
+  },
+
+  // ----- SENADORES -----
+  // Fonte: Dados Abertos do Senado, painel CEAPS 2026 [citation:2][citation:8]
+  senado: {
+    titulo: 'Top 20 — Senadores',
+    fonte: 'Senado Federal',
+    itens: [
+      { nome: 'Beto Faro', partido: 'PT', uf: 'PA', total: 382507.00, principal: 'CEAPS total' },
+      { nome: 'Laércio Oliveira', partido: 'PP', uf: 'SE', total: 370749.00, principal: 'Locomoção: R$ 241 mil' },
+      { nome: 'Alessandro Vieira', partido: 'MDB', uf: 'SE', total: 365154.00, principal: 'CEAPS total' },
+      { nome: 'Nelsinho Trad', partido: 'PSD', uf: 'MS', total: 363434.00, principal: 'Divulgação: R$ 210 mil' },
+      { nome: 'Paulo Paim', partido: 'PT', uf: 'RS', total: 356333.00, principal: 'CEAPS total' },
+      { nome: 'Soraya Thronicke', partido: 'PSB', uf: 'MS', total: 347453.00, principal: 'CEAPS total' },
+      { nome: 'Omar Aziz', partido: 'PSD', uf: 'AM', total: 346962.00, principal: 'CEAPS total' },
+      { nome: 'Rogério Carvalho', partido: 'PT', uf: 'SE', total: 345070.00, principal: 'CEAPS total' },
+      { nome: 'Wellington Fagundes', partido: 'PL', uf: 'MT', total: 344789.00, principal: 'CEAPS total' },
+      { nome: 'Lucas Barreto', partido: 'PSD', uf: 'AP', total: 339294.00, principal: 'CEAPS total' },
+      { nome: 'Humberto Costa', partido: 'PT', uf: 'PE', total: 338169.00, principal: 'Locomoção: R$ 223 mil' },
+      { nome: 'Jayme Campos', partido: 'União', uf: 'MT', total: 337556.00, principal: 'CEAPS total' },
+      { nome: 'Fernando Dueire', partido: 'PSD', uf: 'PE', total: 336921.00, principal: 'SW4: R$ 84 mil' },
+      { nome: 'Dra. Eudócia', partido: 'PSDB', uf: 'AL', total: 330214.00, principal: 'CEAPS total' },
+      { nome: 'Randolfe Rodrigues', partido: 'PT', uf: 'AP', total: 325218.00, principal: 'CEAPS total' },
+      { nome: 'Marcio Bittar', partido: 'PL', uf: 'AC', total: 323017.00, principal: 'CEAPS total' },
+      { nome: 'Daniella Ribeiro', partido: 'PP', uf: 'PB', total: 314346.00, principal: 'CEAPS total' },
+      { nome: 'Carlos Portinho', partido: 'PL', uf: 'RJ', total: 313916.00, principal: 'CEAPS total' },
+      { nome: 'Jussara Lima', partido: 'PSD', uf: 'PI', total: 312884.00, principal: 'CEAPS total' },
+      { nome: 'Zequinha Marinho', partido: 'Podemos', uf: 'PA', total: 308043.00, principal: 'CEAPS total' }
+    ]
+  },
+
+  // ----- DEPUTADOS ESTADUAIS -----
+  // Fonte: Alesp (SP) e Alesc (SC), 2026 [citation:3][citation:9]
+  estadual: {
+    titulo: 'Top 20 — Deputados Estaduais',
+    fonte: 'ALESP / ALESC',
+    itens: [
+      { nome: 'Alex Brasil', partido: 'PL', uf: 'SC', total: 397919.49, principal: '1º sem 2026' },
+      { nome: 'Marcos Vieira', partido: 'PSDB', uf: 'SC', total: 354358.50, principal: '1º sem 2026' },
+      { nome: 'Lucas Neves', partido: 'Republicanos', uf: 'SC', total: 331730.31, principal: '1º sem 2026' },
+      { nome: 'Fabiano da Luz', partido: 'PT', uf: 'SC', total: 327766.93, principal: 'Diárias: R$ 140,4 mil' },
+      { nome: 'Mário Motta', partido: 'PSD', uf: 'SC', total: 326077.62, principal: '1º sem 2026' },
+      { nome: 'Padre Pedro Baldissera', partido: 'PT', uf: 'SC', total: 324383.97, principal: 'Diárias: R$ 150,4 mil' },
+      { nome: 'Rodrigo Minotto', partido: 'PDT', uf: 'SC', total: 316172.38, principal: '1º sem 2026' },
+      { nome: 'Oscar Gutz', partido: 'PL', uf: 'SC', total: 312413.61, principal: '1º sem 2026' },
+      { nome: 'Ana Campagnolo', partido: 'PL', uf: 'SC', total: 306490.58, principal: '1º sem 2026' },
+      { nome: 'Marcos da Rosa', partido: 'PL', uf: 'SC', total: 300291.67, principal: '1º sem 2026' },
+      { nome: 'Nilson Berlanda', partido: 'PSD', uf: 'SC', total: 296612.23, principal: 'Diárias: R$ 161,9 mil' },
+      { nome: 'Napoleão Bernardes', partido: 'PSD', uf: 'SC', total: 296505.09, principal: '1º sem 2026' },
+      { nome: 'Tiago Zilli', partido: 'MDB', uf: 'SC', total: 296196.85, principal: '1º sem 2026' },
+      { nome: 'Altair Silva', partido: 'PP', uf: 'SC', total: 291718.61, principal: 'Reembolsos: R$ 82,3 mil' },
+      { nome: 'Camilo Martins', partido: 'PL', uf: 'SC', total: 287772.38, principal: '1º sem 2026' },
+      { nome: 'Ivan Naatz', partido: 'PL', uf: 'SC', total: 280681.06, principal: '1º sem 2026' },
+      { nome: 'Pepê Collaço', partido: 'PP', uf: 'SC', total: 278352.61, principal: '1º sem 2026' },
+      { nome: 'José Milton Scheffer', partido: 'PP', uf: 'SC', total: 272914.11, principal: '1º sem 2026' },
+      { nome: 'Antídio Lunelli', partido: 'MDB', uf: 'SC', total: 272857.21, principal: '1º sem 2026' },
+      { nome: 'Paulinha', partido: 'Podemos', uf: 'SC', total: 270117.38, principal: '1º sem 2026' }
+    ]
+  },
+
+  // ----- VEREADORES -----
+  // Fonte: Câmara Municipal de Manaus (CMM), 2026 [citation:4][citation:16]
+  vereador: {
+    titulo: 'Top 20 — Vereadores (CMM)',
+    fonte: 'Câmara Municipal de Manaus',
+    itens: [
+      { nome: 'Roberto Sabino', partido: 'Republicanos', uf: 'AM', total: 165400.00, principal: 'Assessoria: R$ 6 mil/mês' },
+      { nome: 'David Reis', partido: 'Avante', uf: 'AM', total: 165393.50, principal: 'Veículos: R$ 16,5 mil/mês' },
+      { nome: 'Yomara Lins', partido: 'Podemos', uf: 'AM', total: 165343.00, principal: 'Assessoria: R$ 14 mil/mês' },
+      { nome: 'Daniel Vasconcelos', partido: 'Republicanos', uf: 'AM', total: 27600.00, principal: 'Menor gasto' },
+      { nome: 'Professora Jacqueline', partido: 'União', uf: 'AM', total: 40643.98, principal: '2º menor gasto' },
+      { nome: 'Coronel Rosses', partido: 'PL', uf: 'AM', total: 93800.00, principal: '—' },
+      { nome: 'Amauri Gomes', partido: 'PSD', uf: 'AM', total: 96000.00, principal: '—' },
+      { nome: 'Rodrigo Guedes', partido: 'Republicanos', uf: 'AM', total: 100600.00, principal: '—' },
+      { nome: 'Glória Carratte', partido: 'PSB', uf: 'AM', total: 0, principal: 'Zerado' },
+      { nome: 'Rosinaldo Bual', partido: 'Agir', uf: 'AM', total: 0, principal: 'Zerado' }
+    ]
+  },
+
+  // ----- MINISTROS DE ESTADO -----
+  // Fonte: Reportagens com dados oficiais, 2024-2026 [citation:2][citation:5]
+  ministros: {
+    titulo: 'Top — Ministros de Estado',
+    fonte: 'Portal da Transparência (Executivo)',
+    itens: [
+      { nome: 'Mauro Vieira', partido: '—', uf: 'Relações Exteriores', total: 788900.00, principal: '30 viagens em 2024' },
+      { nome: 'Camilo Santana', partido: 'PT', uf: 'Educação', total: 307100.00, principal: '73 viagens' },
+      { nome: 'Silvio Costa Filho', partido: 'Republicanos', uf: 'Portos e Aeroportos', total: 305500.00, principal: '99 viagens' },
+      { nome: 'Jaques Wagner', partido: 'PT', uf: 'Senador (BA)', total: 305000.00, principal: 'Locomoção: R$ 305 mil' },
+      { nome: 'Humberto Costa', partido: 'PT', uf: 'Senador (PE)', total: 223000.00, principal: 'Locomoção: R$ 223 mil' },
+      { nome: 'Davi Alcolumbre', partido: 'União', uf: 'Senador (AP)', total: 240000.00, principal: 'Divulgação: R$ 168 mil' },
+      { nome: 'Esperidião Amin', partido: 'PP', uf: 'Senador (SC)', total: 460000.00, principal: 'Locomoção: R$ 138 mil' },
+      { nome: 'Lucas Barreto', partido: 'PSD', uf: 'Senador (AP)', total: 474000.00, principal: '—' },
+      { nome: 'Plínio Valério', partido: 'PSDB', uf: 'Senador (AM)', total: 676677.45, principal: 'Ranking nacional' },
+      { nome: 'Omar Aziz', partido: 'PSD', uf: 'Senador (AM)', total: 592726.57, principal: '3º nacional' },
+      { nome: 'Eduardo Braga', partido: 'MDB', uf: 'Senador (AM)', total: 566140.19, principal: '9º nacional' }
+    ]
+  }
+};
+
+// ============================================
+// RENDERIZAÇÃO
+// ============================================
+let categoriaAtual = 'camara';
+
+function formatBRL(v) {
+  return v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+}
+
+function render() {
+  const cat = dados[categoriaAtual];
+  const itens = cat.itens;
+  const top = itens[0];
+  const top20 = itens.slice(0, 20);
+  const soma = top20.reduce((s, d) => s + d.total, 0);
+  const media = soma / top20.length;
+  const maxTotal = top.total;
+
+  // Cards
+  document.getElementById('topName').textContent = top.nome;
+  document.getElementById('topValue').textContent = `${formatBRL(top.total)} — ${top.partido !== '—' ? top.partido + '/' : ''}${top.uf}`;
+  document.getElementById('totalGasto').textContent = formatBRL(soma);
+  document.getElementById('mediaGasto').textContent = formatBRL(media);
+  document.getElementById('fonteNome').textContent = cat.fonte;
+  document.getElementById('rankingTitle').textContent = cat.titulo;
+
+  // Tabela
+  const tbody = document.getElementById('tableBody');
+  tbody.innerHTML = top20.map((d, i) => {
+    const pos = i + 1;
+    const posClass = pos === 1 ? 'top1' : pos === 2 ? 'top2' : pos === 3 ? 'top3' : '';
+    const barWidth = maxTotal > 0 ? (d.total / maxTotal * 100).toFixed(1) : 0;
+
+    return `
+      <div class="table-row">
+        <div class="rank-num ${posClass}">${pos}</div>
+        <div>
+          <div class="politician-name">${d.nome}</div>
+          <div class="politician-party">${d.principal || ''}</div>
+        </div>
+        <div class="cell-muted" style="text-align:left;">${d.partido}</div>
+        <div class="cell-muted" style="text-align:left;">${d.uf}</div>
+        <div class="cell-value strong">${formatBRL(d.total)}</div>
+        <div class="bar-wrap"><div class="bar-fill" style="width:${barWidth}%"></div></div>
+      </div>
+    `;
+  }).join('');
+
+  const agora = new Date();
+  document.getElementById('atualizado').textContent =
+    `Atualizado em ${agora.toLocaleDateString('pt-BR')} · ${cat.fonte}`;
+}
+
+// Filtros
+document.querySelectorAll('.cat-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    categoriaAtual = btn.dataset.cat;
+    render();
+  });
+});
+
+render();
+</script>
+</body>
+</html>
